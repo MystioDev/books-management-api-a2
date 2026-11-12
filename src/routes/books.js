@@ -1,0 +1,21 @@
+const express = require("express");
+
+const db = require("../db/db");
+const { books } = require("../db/schema");
+
+const router = express.Router();
+
+router.get("/", async (req, res) => {
+  try {
+    const entries = await db.select().from(books);
+
+    return res.status(200).json(entries);
+  } catch (err) {
+    return res.status(500).json({
+      message: err.message || "Something went wrong!",
+      // message: err.message ? err.message : "Something went wrong (part 2)!",
+    });
+  }
+});
+
+module.exports = router;
