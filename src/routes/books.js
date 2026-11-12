@@ -97,4 +97,32 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  try {
+    const [entry] = await db
+      .select()
+      .from(books)
+      .where(eq(books.id, +req.params.id));
+
+    if (!entry) {
+      return res.status(404).json({
+        message: "Book not found",
+      });
+    }
+
+    const { title, author, year } = req.body;
+
+    await db
+      .update(books)
+      .set({ title: title, author: author, year: year })
+      .where(eq(books.id, +req.params.id));
+
+    return res.status(200).json({
+      message: "Book updated successfully!",
+    });
+  } catch (err) {
+    return renderErrorHandler(err, res);
+  }
+});
+
 module.exports = router;
